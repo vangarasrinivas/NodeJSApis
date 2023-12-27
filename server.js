@@ -1,20 +1,40 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
+const cors = require('cors');
 const BrandName = require("./model");
 const Registeruser = require("./regmodel");
 const app = express();
 app.use(express.json());
 const jwt = require("jsonwebtoken");
+app.use(cors());
 
 // https://cloud.mongodb.com/v2/6442234d25ab8c1251dc5be9#/metrics/replicaSet/64422873e34e165e7bf7d911/explorer/test/brandnames/find
 
-mongoose
-  .connect(
-    "mongodb+srv://srinivasvangara96:Srinu7899@cluster0.qutnzhk.mongodb.net/?retryWrites=true&w=majority"
-  )
-  .then(() => console.log("connected successfully"))
-  .catch((err) => console.log("error", err));
+// mongoose
+//   .connect(
+//     "mongodb+srv://srinivasvangara96:Srinu1996@cluster0.qutnzhk.mongodb.net/?retryWrites=true&w=majority", {
+//       useUnifiedTopology: true ,
+//       useNewUrlParser: true,
+//       useCreateIndex : true
+//   })
+//   .then(() => console.log("connected successfully"))
+//   .catch((err) => console.log("Data Base Error", err));
+
+mongoose.connect(
+  "mongodb+srv://srinivasvangara96:Srinu1996@cluster0.qutnzhk.mongodb.net/?retryWrites=true&w=majority",
+  { useNewUrlParser: true, useUnifiedTopology: true }
+);
+
+const db = mongoose.connection;
+
+db.on('error', (err) => {
+  console.error('Connection error:', err);
+});
+
+db.once('open', () => {
+  console.log('Connected to the database');
+});
 
 app.get("/", (req, res) => {
   res.send(`<h1>Server Started Successfully!</h1>`);
@@ -42,6 +62,7 @@ app.post("/addbrands", async (req, res) => {
 
 //get all Brands
 app.get("/getallbrands", async (req, res) => {
+  console.log("trigge");
   try {
     const allData = await BrandName.find();
     return res.json(allData);
